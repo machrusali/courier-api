@@ -3,87 +3,87 @@
 [![Laravel Version](https://img.shields.io/badge/laravel->=11.x-red.svg)](https://laravel.com)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-A robust, lightweight, and high-performance RESTful API service built with Laravel to manage courier/driver logistics master data. This micro-module provides advanced sorting, partial multi-word keyword search matching, structural multi-level capability filtering, and enterprise-grade data validation.
+Sebuah layanan RESTful API yang andal, ringan, dan berkinerja tinggi yang dibangun menggunakan Laravel untuk mengelola master data logistik kurir/driver. Mikro-modul ini menyediakan fitur pengurutan lanjutan, pencarian kata kunci multi-kata (parsial), penyaringan tingkat kemampuan multi-level, dan validasi data standar industri.
 
-Designed specifically as a headless backend module (No UI/HTML overhead), it utilizes SQLite for ultra-fast operation and effortless zero-configuration deployments.
-
----
-
-## 🛠️ Key Architectural Features
-
-- **Decoupled Backend Architecture**: Clean API Resource representation, completely independent of any Frontend library.
-- **Advanced Query Filtering Engine**:
-  - **Dynamic Multi-Word Search**: Intelligently breaks down query fragments (e.g., ?search=budi+agung) to evaluate and match comprehensive text variations (e.g., Budiono Hadi Agung).
-  - **Categorical Array Filters**: Allows composite state or level evaluations (e.g., ?level=2,3).
-  - **Fluid Override Ordering**: Seamlessly switches between alpha-sorting (name) and chronological audit tracks (created_at).
-- **Complete Feature Test Coverage**: Full suite of programmatic assertions evaluating positive execution pipelines, edge cases, and request bounds validation.
+Didesain khusus sebagai modul backend tanpa kepala (Headless/No UI), sistem ini menggunakan SQLite untuk operasi yang sangat cepat dan penerapan tanpa konfigurasi yang rumit.
 
 ---
 
-## 🏗️ Technical Blueprint & Schema
+## 🛠️ Fitur Arsitektur Utama
 
-The data layer models a typical logistical courier node mapped with the following core constraints:
+- **Arsitektur Backend Terpisah**: Representasi API Resource yang bersih, sepenuhnya independen dari pustaka Frontend mana pun.
+- **Mesin Pencarian & Filter Canggih**:
+  - **Pencarian Multi-Kata Dinamis**: Memecah fragmen query secara cerdas (misal: ?search=budi+agung) untuk mencocokkan variasi teks yang panjang (misal: Budiono Hadi Agung).
+  - **Filter Larik Kategoris**: Memungkinkan evaluasi komposit tingkatan kurir secara bersamaan (misal: ?level=2,3).
+  - **Pengurutan Fleksibel**: Beralih dengan mulus antara pengurutan alfabetis (name) dan jejak audit kronologis (created_at).
+- **Cakupan Pengujian Fitur Lengkap**: Rangkaian pengujian terotomatisasi yang mengevaluasi jalur eksekusi positif, kasus ekstrem (edge cases), dan batas validasi permintaan.
 
-| Column | Data Type | Attributes / Constraints | Description |
+---
+
+## 🏗️ Cetak Biru Teknis & Skema
+
+Lapisan data memetakan node kurir logistik dengan batasan inti berikut:
+
+| Kolom | Tipe Data | Atribut / Batasan | Deskripsi |
 | :--- | :--- | :--- | :--- |
-| id | BigInteger | Primary Key, Auto-Increment | Unique identifier. |
-| name | String | Required, Max: 255 | Legal name of the carrier. |
-| phone_number | String | Required, Unique, Max: 20 | Unique contact index. |
-| vehicle_type | String | Required, Max: 50 | Category representation (e.g., Motorcycle, Van). |
-| level | TinyInteger | Required, Default: 1, Range: 1-5 | Functional tier classification. |
-| is_active | Boolean | Default: true | Soft operational availability state flag. |
-| timestamps | Datetime | Nullable | Tracks system entry (created_at, updated_at). |
+| id | BigInteger | Primary Key, Auto-Increment | Identifikasi unik kurir. |
+| name | String | Wajib, Maks: 255 | Nama resmi kurir. |
+| phone_number | String | Wajib, Unik, Maks: 20 | Nomor kontak unik kurir. |
+| vehicle_type | String | Wajib, Maks: 50 | Kategori kendaraan (misal: Motorcycle, Van). |
+| level | TinyInteger | Wajib, Default: 1, Rentang: 1-5 | Klasifikasi tingkatan operasional kurir. |
+| is_active | Boolean | Default: true | Penanda status ketersediaan operasional. |
+| timestamps | Datetime | Bawaan Laravel | Melacak waktu data dibuat & diperbarui (created_at, updated_at). |
 
 ---
 
-## 🚀 Getting Started (Local Development)
+## 🚀 Panduan Memulai (Pengembangan Lokal)
 
-### Prerequisites
-Ensure your server environment matches the following standard setup requirements:
-- PHP >= 8.2 (with JSON, SQLite, and PDO extensions enabled)
+### Prasyarat
+Pastikan lingkungan server Anda memenuhi standar berikut:
+- PHP >= 8.2 (dengan ekstensi JSON, SQLite, dan PDO aktif)
 - Composer Package Manager
 
-### 1. Installation & Environment Configuration
-Clone the official repository branch directly from GitHub:
+### 1. Intalasi & Konfigurasi Lingkungan
+Klon repositori resmi langsung dari GitHub:
 git clone https://github.com/machrusali/courier-api.git
 cd courier-api
 
-Instantiate environmental configurations:
+Salin konfigurasi lingkungan:
 cp .env.example .env
 
-Ensure that your .env contains the required flat-file driver specification:
+Pastikan berkas .env Anda berisi spesifikasi driver SQLite berikut:
 DB_CONNECTION=sqlite
 
-### 2. Dependency Resolution & Database Provisioning
-Install production and development vendors, build the local target database storage file, and process migration schemas:
+### 2. Pemasangan Dependensi & Migrasi Database
+Instal dependensi package, buat berkas database lokal SQLite, dan jalankan migrasi skema tabel:
 composer install
 touch database/database.sqlite
 php artisan migrate
 
-### 3. Execution
-Fire up the built-in HTTP server gateway:
+### 3. Menjalankan Aplikasi
+Jalankan server HTTP lokal:
 php artisan serve
 
-The endpoint collection will now actively listen to ingress networking data at http://127.0.0.1:8000/api.
+Koleksi endpoint API sekarang aktif dan siap menerima permintaan di http://127.0.0.1:8000/api.
 
 ---
 
-## 📌 API Reference Manual
+## 📌 Panduan Referensi API
 
-Every request must include the header Accept: application/json.
+Setiap permintaan wajib menyertakan header Accept: application/json.
 
-### 🔹 1. Fetch Collection
-- HTTP Method: GET
-- URI Path: /api/couriers
-- Supported Query Modifiers:
-  - sort: Defines sequence strategy (name [Default] or created_at).
-  - search: Full text string parsing. Splits terms dynamically (e.g., ?search=budi+agung).
-  - level: Discrete numerical constraint arrays separated by commas (e.g., ?level=2,3).
+### 🔹 1. Ambil Koleksi Data (Fetch Collection)
+- Metode HTTP: GET
+- Jalur URI: /api/couriers
+- Parameter Query yang Didukung:
+  - sort: Menentukan strategi urutan (name [Default] atau created_at).
+  - search: Pencarian teks. Memecah istilah secara dinamis (misal: ?search=budi+agung).
+  - level: Memfilter beberapa level sekaligus menggunakan pemisah koma (misal: ?level=2,3).
 
-### 🔹 2. Create Instance
-- HTTP Method: POST
-- URI Path: /api/couriers
-- Payload Schema JSON:
+### 🔹 2. Tambah Data (Create Instance)
+- Metode HTTP: POST
+- Jalur URI: /api/couriers
+- Format JSON Payload:
 {
     "name": "Budiono Hadi Agung",
     "phone_number": "081234567890",
@@ -91,22 +91,31 @@ Every request must include the header Accept: application/json.
     "level": 3
 }
 
-### 🔹 3. Retrieve Resource Instance
-- HTTP Method: GET
-- URI Path: /api/couriers/{id}
+### 🔹 3. Ambil Detail Data (Retrieve Instance)
+- Metode HTTP: GET
+- Jalur URI: /api/couriers/{id}
 
-### 🔹 4. Update Resource State
-- HTTP Method: PUT / PATCH
-- URI Path: /api/couriers/{id}
+### 🔹 4. Perbarui Data (Update State)
+- Metode HTTP: PUT / PATCH
+- Jalur URI: /api/couriers/{id}
 
-### 🔹 5. Terminate Instance
-- HTTP Method: DELETE
-- URI Path: /api/couriers/{id}
+### 🔹 5. Hapus Data (Terminate Instance)
+- Metode HTTP: DELETE
+- Jalur URI: /api/couriers/{id}
 
 ---
 
-## 🧪 Automated Testing Suite
+## 🧪 Rangkaian Pengujian Otomatis (Automated Testing)
 
-The codebase enforces testing guidelines via continuous isolation patterns. To run the automated feature suites across the controllers and filters, execute:
+Sistem ini menerapkan pengujian terisolasi untuk menjaga integritas kode. Untuk menjalankan seluruh rangkaian uji fitur pada controller dan filter, jalankan perintah:
 
 php artisan test
+
+---
+
+## 📸 Bukti Hasil Running Test (All Green)
+
+Seluruh unit dan fitur pada API ini telah diuji secara otomatis dan lulus pengujian 100%. 
+
+Kamu dapat melihat gambar bukti pengujian melalui tautan berikut:
+👉 **[Lihat Screenshot Hasil Pengujian (test-done.png)](./screenshots/test-done.png)**
