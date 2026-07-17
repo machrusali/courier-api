@@ -1,43 +1,112 @@
-# Courier Management API (Laravel + SQLite)
+# Courier Management API
 
-Repositori ini dibuat untuk memenuhi persyaratan **Test Programming: Modul Master Data Kurir (Courier)**. Project ini dibangun menggunakan framework Laravel dengan database SQLite serta mengimplementasikan API CRUD, filtrasi lanjutan, pencarian multi-kata, pengurutan kustom, pencatatan otomatis, dan *Automated Feature Testing*.
+[![Laravel Version](https://img.shields.io/badge/laravel->=11.x-red.svg)](https://laravel.com)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Project ini murni berbasis API (Backend Only) dan tidak menyediakan komponen UI (HTML/CSS/JS) sesuai dengan instruksi pada dokumen brief.
+A robust, lightweight, and high-performance RESTful API service built with Laravel to manage courier/driver logistics master data. This micro-module provides advanced sorting, partial multi-word keyword search matching, structural multi-level capability filtering, and enterprise-grade data validation.
 
----
-
-## 🛠️ Fitur & Spesifikasi Sesuai Brief
-
-1. **Master Data Kurir (Couriers Table)**:
-   - `name`: Nama Kurir (String)
-   - `phone_number`: Nomor Telepon Unik (String)
-   - `vehicle_type`: Tipe Kendaraan (String)
-   - `level`: Tingkatan Kurir 1 s/d 5 (TinyInteger)
-   - `is_active`: Status Aktif (Boolean)
-   - `timestamps`: Tanggal Dibuat & Diperbarui (`created_at`, `updated_at`)
-
-2. **Fitur Endpoint Index (`GET /api/couriers`)**:
-   - **Pagination**: Otomatis membagi hasil dalam beberapa halaman (Default: 10 data per halaman).
-   - **Default Sort**: Hasil diurutkan berdasarkan Nama Kurir (`name`) secara ascending.
-   - **Override Sort**: Frontend dapat meminta urutan berdasarkan tanggal didaftarkan menggunakan parameter `?sort=created_at`.
-   - **Multi-word Search Matching**: Pencarian pintar menggunakan parameter `?search=budi+agung` yang dapat mencocokkan nama panjang seperti `Budiono Hadi Agung`.
-   - **Multi-level Filtering**: Memfilter kurir berdasarkan tingkatan tertentu menggunakan parameter koma, contoh: `?level=2,3`.
-
-3. **Validasi & Integritas Data**:
-   - Validasi ketat pada `store` dan `update`.
-   - Validasi level wajib berada di rentang angka 1-5.
-   - Validasi keunikan `phone_number` untuk mencegah duplikasi data di database.
-
-4. **Automated Testing**:
-   - Dilengkapi dengan *Feature Tests* (`tests/Feature/CourierApiTest.php`) untuk memastikan seluruh alur CRUD, skenario kegagalan validasi, pencarian, pengurutan, serta penghapusan data berfungsi 100% dan terisolasi dengan baik.
+Designed specifically as a headless backend module (No UI/HTML overhead), it utilizes SQLite for ultra-fast operation and effortless zero-configuration deployments.
 
 ---
 
-## 🚀 Cara Menjalankan Project Local
+## 🛠️ Key Architectural Features
 
-Pastikan komputer Anda sudah terinstal **PHP (>= 8.2)** dan **Composer**. Karena project ini menggunakan **SQLite**, Anda tidak memerlukan server MySQL/PostgreSQL tambahan.
+- **Decoupled Backend Architecture**: Clean API Resource representation, completely independent of any Frontend library.
+- **Advanced Query Filtering Engine**:
+  - **Dynamic Multi-Word Search**: Intelligently breaks down query fragments (e.g., ?search=budi+agung) to evaluate and match comprehensive text variations (e.g., Budiono Hadi Agung).
+  - **Categorical Array Filters**: Allows composite state or level evaluations (e.g., ?level=2,3).
+  - **Fluid Override Ordering**: Seamlessly switches between alpha-sorting (name) and chronological audit tracks (created_at).
+- **Complete Feature Test Coverage**: Full suite of programmatic assertions evaluating positive execution pipelines, edge cases, and request bounds validation.
 
-### 1. Clone Repositori
-```bash
-git clone [https://github.com/USERNAME_ANDA/NAMA_REPO_ANDA.git](https://github.com/USERNAME_ANDA/NAMA_REPO_ANDA.git)
-cd NAMA_REPO_ANDA
+---
+
+## 🏗️ Technical Blueprint & Schema
+
+The data layer models a typical logistical courier node mapped with the following core constraints:
+
+| Column | Data Type | Attributes / Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| id | BigInteger | Primary Key, Auto-Increment | Unique identifier. |
+| name | String | Required, Max: 255 | Legal name of the carrier. |
+| phone_number | String | Required, Unique, Max: 20 | Unique contact index. |
+| vehicle_type | String | Required, Max: 50 | Category representation (e.g., Motorcycle, Van). |
+| level | TinyInteger | Required, Default: 1, Range: 1-5 | Functional tier classification. |
+| is_active | Boolean | Default: true | Soft operational availability state flag. |
+| timestamps | Datetime | Nullable | Tracks system entry (created_at, updated_at). |
+
+---
+
+## 🚀 Getting Started (Local Development)
+
+### Prerequisites
+Ensure your server environment matches the following standard setup requirements:
+- PHP >= 8.2 (with JSON, SQLite, and PDO extensions enabled)
+- Composer Package Manager
+
+### 1. Installation & Environment Configuration
+Clone the official repository branch directly from GitHub:
+git clone https://github.com/machrusali/courier-api.git
+cd courier-api
+
+Instantiate environmental configurations:
+cp .env.example .env
+
+Ensure that your .env contains the required flat-file driver specification:
+DB_CONNECTION=sqlite
+
+### 2. Dependency Resolution & Database Provisioning
+Install production and development vendors, build the local target database storage file, and process migration schemas:
+composer install
+touch database/database.sqlite
+php artisan migrate
+
+### 3. Execution
+Fire up the built-in HTTP server gateway:
+php artisan serve
+
+The endpoint collection will now actively listen to ingress networking data at http://127.0.0.1:8000/api.
+
+---
+
+## 📌 API Reference Manual
+
+Every request must include the header Accept: application/json.
+
+### 🔹 1. Fetch Collection
+- HTTP Method: GET
+- URI Path: /api/couriers
+- Supported Query Modifiers:
+  - sort: Defines sequence strategy (name [Default] or created_at).
+  - search: Full text string parsing. Splits terms dynamically (e.g., ?search=budi+agung).
+  - level: Discrete numerical constraint arrays separated by commas (e.g., ?level=2,3).
+
+### 🔹 2. Create Instance
+- HTTP Method: POST
+- URI Path: /api/couriers
+- Payload Schema JSON:
+{
+    "name": "Budiono Hadi Agung",
+    "phone_number": "081234567890",
+    "vehicle_type": "Motorcycle",
+    "level": 3
+}
+
+### 🔹 3. Retrieve Resource Instance
+- HTTP Method: GET
+- URI Path: /api/couriers/{id}
+
+### 🔹 4. Update Resource State
+- HTTP Method: PUT / PATCH
+- URI Path: /api/couriers/{id}
+
+### 🔹 5. Terminate Instance
+- HTTP Method: DELETE
+- URI Path: /api/couriers/{id}
+
+---
+
+## 🧪 Automated Testing Suite
+
+The codebase enforces testing guidelines via continuous isolation patterns. To run the automated feature suites across the controllers and filters, execute:
+
+php artisan test
